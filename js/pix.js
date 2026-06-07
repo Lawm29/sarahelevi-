@@ -1,20 +1,14 @@
-function hex(val, len) {
-  return val.toString(16).toUpperCase().padStart(len, '0');
-}
-
-function crc16(str) {
-  let crc = 0xFFFF;
-  for (let i = 0; i < str.length; i++) {
-    crc ^= str.charCodeAt(i);
-    for (let j = 0; j < 8; j++) {
-      if (crc & 1) {
-        crc = (crc >> 1) ^ 0x8408;
-      } else {
-        crc = crc >> 1;
-      }
+function crc16(payload) {
+  const polynomial = 0x1021;
+  let result = 0xFFFF;
+  for (let i = 0; i < payload.length; i++) {
+    result ^= payload.charCodeAt(i) << 8;
+    for (let bit = 0; bit < 8; bit++) {
+      result = (result & 0x8000) ? ((result << 1) ^ polynomial) : (result << 1);
+      result &= 0xFFFF;
     }
   }
-  return (crc ^ 0xFFFF) >>> 0;
+  return result.toString(16).toUpperCase().padStart(4, '0');
 }
 
 function addId(id, value) {
@@ -24,31 +18,28 @@ function addId(id, value) {
 }
 
 function gerarPayloadPix(chave, valor, nome, cidade) {
-  let payload = '000201';
+  let payload = '';
+
+  payload += addId('00', '01');
 
   const gui = 'BR.GOV.BCB.PIX';
-  const chaveField = addId('01', chave);
-  const merchantAccount = addId('00', gui) + chaveField;
+  const merchantAccount = addId('00', gui) + addId('01', chave);
   payload += addId('26', merchantAccount);
 
-  payload += '52040000';
-  payload += '5303986';
+  payload += addId('52', '0000');
+  payload += addId('53', '986');
 
-  const valorStr = valor.toFixed(2);
-  payload += addId('54', valorStr);
+  if (valor > 0) {
+    payload += addId('54', valor.toFixed(2));
+  }
 
-  payload += '5802BR';
-
-  const nomeLimpo = nome.toUpperCase().substring(0, 25);
-  payload += addId('59', nomeLimpo);
-
-  const cidadeLimpa = cidade.toUpperCase().substring(0, 15);
-  payload += addId('60', cidadeLimpa);
+  payload += addId('58', 'BR');
+  payload += addId('59', nome.toUpperCase().substring(0, 25));
+  payload += addId('60', cidade.toUpperCase().substring(0, 15));
+  payload += addId('62', addId('05', '***'));
 
   payload += '6304';
-
-  const crc = crc16(payload);
-  payload += hex(crc, 4);
+  payload += crc16(payload);
 
   return payload;
 }

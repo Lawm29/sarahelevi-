@@ -37,21 +37,22 @@
       <form id="adminForm" onsubmit="return salvarItem(event)">
         <input type="hidden" id="editId" value="">
         <div class="admin-form-grid">
-          <div>
+          <div class="admin-form-full">
             <label>Nome</label>
             <input type="text" id="formNome" required>
           </div>
           <div>
             <label>Categoria</label>
-            <input type="text" id="formCategoria" required>
+            <div class="admin-categoria-wrap">
+              <select id="formCategoriaSelect" onchange="onCategoriaChange()">
+                <option value="">Carregando...</option>
+              </select>
+              <input type="text" id="formCategoriaNova" placeholder="Nova categoria" style="display:none;margin-top:6px;">
+            </div>
           </div>
           <div>
-            <label>Valor Vista (R$)</label>
+            <label>Valor (R$)</label>
             <input type="number" id="formValorVista" step="0.01" min="0" required>
-          </div>
-          <div>
-            <label>Parcelas (3x)</label>
-            <input type="number" id="formParcelas" step="0.01" min="0">
           </div>
           <div class="admin-form-full">
             <label>URL da Foto</label>
@@ -72,6 +73,7 @@
     </div>
   </div>
 
+  <script src="js/presentes.js"></script>
   <script src="js/admin.js"></script>
 </body>
 </html>

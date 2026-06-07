@@ -2,7 +2,7 @@ const PIX_CHAVE = '40007982860';
 const PIX_NOME = 'LEVI ALBUQUERQUE GOUVEIA';
 const PIX_CIDADE = 'Sao Paulo';
 
-const API_URL = 'https://script.google.com/macros/s/AKfycbxG7h8D4_ff0TmzV_uBPfK7LxbzSM9RomOghN4MNwviGYbnj4QCCT-AnsdIKzlUk3de/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbzPaziNkS56ZIUYNX0L1bx2bb8YfqBbo82qjbMD5v9ZFLkZyrOQZQs-DQbYJepsvlvY/exec';
 
 let cart = [];
 let sliderIndex = 0;
@@ -268,19 +268,20 @@ async function gerarPix(valor) {
   /* Enviar registro da compra para a planilha */
   try {
     const nomeComprador = (document.getElementById('checkoutNome')?.value || '').trim();
-    const mensagens = cart
-      .filter(item => item.mensagem && item.mensagem.trim())
-      .map(item => item.mensagem.trim())
-      .join(' | ');
+    const itens = cart.map(item => ({
+      id: item.id,
+      nome: item.nome,
+      mensagem: item.mensagem || ''
+    }));
 
-    if (nomeComprador || mensagens) {
+    if (nomeComprador || itens.length > 0) {
       await fetch(API_URL, {
         method: 'POST',
         mode: 'no-cors',
         body: JSON.stringify({
           tipo: 'presente',
-          nome: nomeComprador || 'Anônimo',
-          mensagem: mensagens || ''
+          comprador: nomeComprador || 'Anônimo',
+          itens: itens
         })
       });
     }
