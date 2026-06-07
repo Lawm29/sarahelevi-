@@ -31,7 +31,7 @@ function gerarPayloadPix(chave, valor, nome, cidade) {
   const merchantAccount = addId('00', gui) + chaveField;
   payload += addId('26', merchantAccount);
 
-  payload += '52040000';
+  payload += '52482900';
   payload += '5303986';
 
   const valorStr = valor.toFixed(2);
