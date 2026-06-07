@@ -113,8 +113,7 @@ nav {
   position: relative;
   background-image: url(../images/hero.jpg);
   background-size: cover;
-  background-position: center 20%;
-  background-attachment: fixed;
+  background-position: center 25%;
 }
 
 .hero::before {
@@ -954,10 +953,6 @@ footer .names {
 
   .menu-toggle {
     display: block;
-  }
-
-  .hero {
-    background-attachment: scroll;
   }
 
   .hero h1 {

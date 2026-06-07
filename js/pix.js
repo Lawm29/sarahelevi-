@@ -45,6 +45,8 @@ function gerarPayloadPix(chave, valor, nome, cidade) {
   const cidadeLimpa = cidade.toUpperCase().substring(0, 15);
   payload += addId('60', cidadeLimpa);
 
+  payload += addId('62', addId('05', 'QR'));
+
   payload += '6304';
 
   const crc = crc16(payload);
@@ -63,5 +65,18 @@ function copiarChavePix() {
     const original = btn.textContent;
     btn.textContent = 'Copiado!';
     setTimeout(() => { btn.textContent = original; }, 2000);
+  });
+}
+
+function gerarQRCode(elementId, payload) {
+  const container = document.getElementById(elementId);
+  container.innerHTML = '';
+  new QRCode(container, {
+    text: payload,
+    width: 220,
+    height: 220,
+    colorDark: '#3a2a1a',
+    colorLight: '#ffffff',
+    correctLevel: QRCode.CorrectLevel.L
   });
 }

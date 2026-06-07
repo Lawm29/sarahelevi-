@@ -234,12 +234,7 @@ function gerarPix(valor) {
 
   document.getElementById('pix-copia-cola').value = payload;
 
-  const img = document.createElement('img');
-  img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&bgcolor=ffffff&color=3a2a1a&data=' + encodeURIComponent(payload);
-  img.alt = 'QR Code PIX';
-  img.width = 220;
-  img.height = 220;
-  container.appendChild(img);
+  gerarQRCode('pix-qrcode', payload);
 }
 
 function fecharCheckout() {
