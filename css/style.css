@@ -915,11 +915,12 @@ nav {
 .footer-foto {
   position: relative;
   text-align: center;
-  padding: 10px 20px 250px;
-  background-size: cover;
-  background-position: center;
+  padding: 10px 20px 10px;
+  background-size: contain;
+  background-position: center bottom;
   background-repeat: no-repeat;
-  background-color: #1a1a1a;
+  background-color: #fff;
+  min-height: 350px;
 }
 
 .footer-overlay {

@@ -3,6 +3,7 @@ const SENHA = 'sarahlevi2026';
 
 let adminPresentes = [];
 let logado = false;
+let saving = false;
 
 /* ─── Login ─── */
 function fazerLogin() {
@@ -228,7 +229,11 @@ function moverItem(idx, direcao) {
 
 /* ─── Salvar na Planilha ─── */
 async function salvarTudo() {
+  if (saving) return;
   if (!confirm('Salvar todas as mudanças na planilha? Isso vai sobrescrever a lista atual.')) return;
+  saving = true;
+  const btn = document.getElementById('btnSalvar');
+  if (btn) btn.disabled = true;
   setStatus('Salvando na planilha...');
 
   try {
@@ -256,6 +261,9 @@ async function salvarTudo() {
     setTimeout(() => setStatus(''), 3000);
   } catch (e) {
     setStatus('Erro ao salvar. Tente novamente.');
+  } finally {
+    saving = false;
+    if (btn) btn.disabled = false;
   }
 }
 
