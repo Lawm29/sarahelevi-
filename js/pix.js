@@ -31,7 +31,7 @@ function gerarPayloadPix(chave, valor, nome, cidade) {
   const merchantAccount = addId('00', gui) + chaveField;
   payload += addId('26', merchantAccount);
 
-  payload += '52482900';
+  payload += '52040000';
   payload += '5303986';
 
   const valorStr = valor.toFixed(2);
@@ -44,8 +44,6 @@ function gerarPayloadPix(chave, valor, nome, cidade) {
 
   const cidadeLimpa = cidade.toUpperCase().substring(0, 15);
   payload += addId('60', cidadeLimpa);
-
-  payload += addId('62', addId('05', 'QR'));
 
   payload += '6304';
 
@@ -71,12 +69,17 @@ function copiarChavePix() {
 function gerarQRCode(elementId, payload) {
   const container = document.getElementById(elementId);
   container.innerHTML = '';
-  new QRCode(container, {
-    text: payload,
-    width: 220,
-    height: 220,
-    colorDark: '#3a2a1a',
-    colorLight: '#ffffff',
-    correctLevel: QRCode.CorrectLevel.L
+
+  QRCode.toCanvas(document.createElement('canvas'), payload, {
+    errorCorrectionLevel: 'M',
+    width: 300,
+    margin: 2,
+    color: {
+      dark: '#000000',
+      light: '#ffffff'
+    }
+  }, function(err, canvas) {
+    if (err) return;
+    container.appendChild(canvas);
   });
 }

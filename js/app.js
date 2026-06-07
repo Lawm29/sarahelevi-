@@ -1,6 +1,6 @@
 const PIX_CHAVE = '40007982860';
 const PIX_NOME = 'Sarah E Levi';
-const PIX_CIDADE = 'Sao Paulo';
+const PIX_CIDADE = 'Jundiai';
 
 let cart = [];
 let sliderIndex = 0;
