@@ -3,7 +3,7 @@ const PIX_NOME = 'Sarah & Levi';
 const PIX_CIDADE = 'Sao Paulo';
 
 let cart = [];
-let qrCodeInstance = null;
+let sliderIndex = 0;
 
 /* ─── Countdown ─── */
 function atualizarCountdown() {
@@ -209,15 +209,12 @@ function gerarPix(valor) {
 
   document.getElementById('pix-copia-cola').value = payload;
 
-  if (qrCodeInstance) qrCodeInstance.clear();
-  qrCodeInstance = new QRCode(container, {
-    text: payload,
-    width: 220,
-    height: 220,
-    colorDark: '#3a2a1a',
-    colorLight: '#ffffff',
-    correctLevel: QRCode.CorrectLevel.M
-  });
+  const img = document.createElement('img');
+  img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&bgcolor=ffffff&color=3a2a1a&data=' + encodeURIComponent(payload);
+  img.alt = 'QR Code PIX';
+  img.width = 220;
+  img.height = 220;
+  container.appendChild(img);
 }
 
 function fecharCheckout() {
@@ -239,7 +236,46 @@ function enviarRSVP() {
   document.getElementById('rsvpSuccess').style.display = 'block';
 }
 
+/* ─── Slider ─── */
+function sliderInit() {
+  const track = document.getElementById('sliderTrack');
+  if (!track) return;
+  const total = track.children.length;
+  const dotsContainer = document.getElementById('sliderDots');
+  for (let i = 0; i < total; i++) {
+    const dot = document.createElement('button');
+    dot.className = 'dot' + (i === 0 ? ' active' : '');
+    dot.onclick = () => sliderGo(i);
+    dotsContainer.appendChild(dot);
+  }
+  sliderGo(0);
+}
+
+function sliderGo(index) {
+  const track = document.getElementById('sliderTrack');
+  const dots = document.querySelectorAll('.slider-dots .dot');
+  if (!track || !dots.length) return;
+  sliderIndex = index;
+  track.style.transform = 'translateX(-' + (index * 100) + '%)';
+  dots.forEach((d, i) => d.classList.toggle('active', i === index));
+}
+
+function sliderPrev() {
+  const track = document.getElementById('sliderTrack');
+  if (!track) return;
+  const total = track.children.length;
+  sliderGo((sliderIndex - 1 + total) % total);
+}
+
+function sliderNext() {
+  const track = document.getElementById('sliderTrack');
+  if (!track) return;
+  const total = track.children.length;
+  sliderGo((sliderIndex + 1) % total);
+}
+
 /* ─── Init ─── */
 carregarCategorias();
 renderizarPresentes('todas');
 atualizarCarrinho();
+sliderInit();
