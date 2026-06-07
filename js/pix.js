@@ -45,9 +45,6 @@ function gerarPayloadPix(chave, valor, nome, cidade) {
   const cidadeLimpa = cidade.toUpperCase().substring(0, 15);
   payload += addId('60', cidadeLimpa);
 
-  const txId = String(Date.now()).slice(-8);
-  payload += addId('62', addId('05', txId));
-
   payload += '6304';
 
   const crc = crc16(payload);

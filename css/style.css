@@ -30,7 +30,11 @@ header {
   background: rgba(255, 253, 247, 0.97);
   border-bottom: 1px solid #e8e0d0;
   z-index: 1000;
-  transition: box-shadow 0.3s;
+  transition: transform 0.3s ease, box-shadow 0.3s;
+}
+
+header.hidden {
+  transform: translateY(-100%);
 }
 
 header.scrolled {
@@ -109,7 +113,7 @@ nav {
   position: relative;
   background-image: url(../images/hero.jpg);
   background-size: cover;
-  background-position: center;
+  background-position: center 60%;
   background-attachment: fixed;
 }
 
@@ -357,6 +361,28 @@ nav {
   gap: 20px;
 }
 
+.gift-img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  background: #f5efe6;
+}
+
+.gift-img-placeholder {
+  width: 100%;
+  height: 150px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  background: linear-gradient(135deg, #f5efe6 0%, #e8ddd0 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  color: #c4947a;
+}
+
 .gift-card {
   background: #fff;
   border: 1px solid #eee8da;
@@ -515,6 +541,31 @@ nav {
   padding: 4px;
 }
 
+.cart-item-mensagem {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #d4c8b4;
+  border-radius: 4px;
+  font-size: 12px;
+  font-family: inherit;
+  color: #4a4a4a;
+  background: #f9f5ef;
+  resize: vertical;
+  min-height: 48px;
+  margin-top: 8px;
+  transition: border-color 0.2s;
+}
+
+.cart-item-mensagem:focus {
+  outline: none;
+  border-color: #c4947a;
+  background: #fff;
+}
+
+.cart-item-mensagem::placeholder {
+  color: #b8a894;
+}
+
 .cart-total {
   display: flex;
   justify-content: space-between;
@@ -614,6 +665,13 @@ nav {
   padding: 8px 0;
   font-size: 14px;
   color: #6a5a4a;
+}
+
+.checkout-mensagem {
+  font-size: 12px;
+  color: #a08870;
+  font-style: italic;
+  margin-top: 4px;
 }
 
 .checkout-total {
@@ -910,6 +968,10 @@ footer .names {
 
   .menu-toggle {
     display: block;
+  }
+
+  .hero {
+    background-attachment: scroll;
   }
 
   .hero h1 {

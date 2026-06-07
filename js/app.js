@@ -4,6 +4,7 @@ const PIX_CIDADE = 'Sao Paulo';
 
 let cart = [];
 let sliderIndex = 0;
+let lastScrollY = 0;
 
 /* ─── Countdown ─── */
 function atualizarCountdown() {
@@ -44,7 +45,23 @@ function atualizarNav() {
   navLinks.forEach(a => {
     a.classList.toggle('active', a.getAttribute('href') === '#' + current);
   });
-  document.getElementById('header').classList.toggle('scrolled', window.scrollY > 60);
+
+  const hero = document.getElementById('home');
+  const heroBottom = hero ? hero.offsetTop + hero.offsetHeight : 0;
+  const header = document.getElementById('header');
+  const scrollY = window.scrollY;
+
+  if (scrollY > heroBottom - 80) {
+    header.classList.remove('hidden');
+    header.classList.toggle('scrolled', true);
+  } else if (scrollY > 80 && scrollY > lastScrollY) {
+    header.classList.add('hidden');
+    header.classList.toggle('scrolled', scrollY > 60);
+  } else {
+    header.classList.remove('hidden');
+    header.classList.toggle('scrolled', scrollY > 60);
+  }
+  lastScrollY = scrollY;
 }
 
 window.addEventListener('scroll', atualizarNav);
@@ -84,8 +101,12 @@ function renderizarPresentes(categoria) {
       ? `<div class="preco-parcela">3x de <span>R$ ${p.valorParcelado.toFixed(2)}</span></div>`
       : '';
     const noCarrinho = cart.some(c => c.id === p.id);
+    const imgHtml = p.imagem
+      ? `<img src="${p.imagem}" alt="${p.nome}" class="gift-img" loading="lazy">`
+      : `<div class="gift-img-placeholder"><span>&#9829;</span></div>`;
     return `
       <div class="gift-card">
+        ${imgHtml}
         <div class="categoria">${p.categoria}</div>
         <div class="nome">${p.nome}</div>
         <div class="precos">
@@ -112,7 +133,7 @@ function adicionarAoCarrinho(id) {
   }
   const item = presentes.find(p => p.id === id);
   if (!item || cart.some(c => c.id === id)) return;
-  cart.push(item);
+  cart.push({ ...item, mensagem: '' });
   atualizarCarrinho();
   renderizarPresentes(document.getElementById('filtroCategoria').value);
   abrirModalCarrinho();
@@ -142,11 +163,12 @@ function atualizarConteudoModal() {
   const total = cart.reduce((s, i) => s + i.valorVista, 0);
   container.innerHTML = `
     <ul class="cart-items">
-      ${cart.map(item => `
+      ${cart.map((item, idx) => `
         <li class="cart-item">
           <div class="cart-item-info">
             <div class="cart-item-nome">${item.nome}</div>
             <div class="cart-item-valor">R$ ${item.valorVista.toFixed(2)}</div>
+            <textarea class="cart-item-mensagem" placeholder="Deixe uma mensagem para os noivos (opcional)" oninput="cart[${idx}].mensagem=this.value">${item.mensagem}</textarea>
           </div>
           <button class="cart-item-remove" onclick="removerDoCarrinho(${item.id})">&times;</button>
         </li>
@@ -193,7 +215,10 @@ function irParaCheckout() {
   const resumo = document.getElementById('checkoutResumo');
   resumo.innerHTML = cart.map(item => `
     <div class="checkout-item">
-      <span>${item.nome}</span>
+      <div>
+        <span>${item.nome}</span>
+        ${item.mensagem ? `<div class="checkout-mensagem">"${item.mensagem}"</div>` : ''}
+      </div>
       <span>R$ ${item.valorVista.toFixed(2)}</span>
     </div>
   `).join('');
