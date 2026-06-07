@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sarah & Levi - 28 de Agosto de 2026</title>
+  <meta name="description" content="Site de casamento de Sarah e Levi - 28 de Agosto de 2026">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+
+  <!-- Header -->
+  <header id="header">
+    <nav>
+      <div class="nav-brand">
+        <span>S</span>
+        <span class="heart">&#9829;</span>
+        <span>L</span>
+      </div>
+      <button class="menu-toggle" id="menuToggle" aria-label="Menu">&#9776;</button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#home" class="active">Home</a></li>
+        <li><a href="#historia">O Casal</a></li>
+        <li><a href="#cerimonia">Cerimônia</a></li>
+        <li><a href="#trajes">Trajes</a></li>
+        <li><a href="#presentes">Lista de Presentes</a></li>
+        <li><a href="#rsvp">Confirme sua Presença</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Hero / Home -->
+  <section id="home" class="hero">
+    <div class="heart-icon">&#9829;</div>
+    <h1>Sarah &amp; Levi</h1>
+    <p class="date">28 DE AGOSTO DE 2026</p>
+    <p class="venue">Villa Castanieri</p>
+    <div class="countdown" id="countdown">
+      <div class="countdown-item"><div class="num" id="days">00</div><div class="label">Dias</div></div>
+      <div class="countdown-item"><div class="num" id="hours">00</div><div class="label">Horas</div></div>
+      <div class="countdown-item"><div class="num" id="minutes">00</div><div class="label">Minutos</div></div>
+      <div class="countdown-item"><div class="num" id="seconds">00</div><div class="label">Segundos</div></div>
+    </div>
+  </section>
+
+  <!-- Nossa História -->
+  <section id="historia" class="section">
+    <div class="container">
+      <h2 class="section-title">Nossa História</h2>
+      <div class="story-content">
+        <p>Nos conhecemos em 2022, mas a nossa história já existia nas orações de nossos pais e no coração do nosso bom Deus.</p>
+        <p>Nos apaixonamos pelos detalhes um do outro, e, em meio à correria da vida de um estudante intercambista e uma estudante que dividia o dia com trabalho e estudo, escolhemos um ao outro. Horas em ligações, filmes, séries e livros compartilhados, vimos um no outro a certeza de um amor maduro e seguro porque tínhamos o mesmo fundamento: Cristo.</p>
+        <p>Em breve seremos, finalmente, um...</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cerimônia -->
+  <section id="cerimonia" class="section">
+    <div class="container">
+      <h2 class="section-title">Cerimônia</h2>
+      <div class="ceremony-info">
+        <p class="date-big">28 de Agosto de 2026</p>
+        <p class="time">às 15h30</p>
+        <p class="address">Villa Castanieri - Mogi das Cruzes - SP</p>
+        <p class="address" style="font-size:12px;">SP-102, 70 - Taiaçupeba, Mogi das Cruzes - SP, 08765-340</p>
+        <a class="btn-map" href="https://maps.app.goo.gl/4vh7Bzzm7UUqegaW8" target="_blank">Ver no Maps</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trajes -->
+  <section id="trajes" class="section">
+    <div class="container">
+      <h2 class="section-title">Trajes</h2>
+      <p class="section-subtitle">Dress Code: Social Completo</p>
+      <div class="attire-content">
+        <h3>Homens</h3>
+        <p>Terno completo com camisa social, gravata e sapato social.</p>
+        <h3>Mulheres</h3>
+        <p>Vestido longo. Evite branco ou off-white.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Lista de Presentes -->
+  <section id="presentes" class="section">
+    <div class="container">
+      <h2 class="section-title">Lista de Presentes</h2>
+      <p class="section-subtitle">Você pode escolher até três presentes por compra.</p>
+
+      <div class="gifts-controls">
+        <select id="filtroCategoria">
+          <option value="todas">Todas as categorias</option>
+        </select>
+        <button class="cart-link" id="cartLink">
+          Ver carrinho (<span id="cartCount">0</span>)
+          <span class="cart-badge" id="cartBadge">0</span>
+        </button>
+      </div>
+
+      <div class="gifts-grid" id="giftsGrid"></div>
+    </div>
+  </section>
+
+  <!-- Modal do Carrinho -->
+  <div class="modal-overlay" id="cartModal">
+    <div class="modal">
+      <h2>Meu Carrinho</h2>
+      <div id="cartContent"></div>
+    </div>
+  </div>
+
+  <!-- Checkout PIX -->
+  <section id="checkout" class="checkout-section" style="display:none;">
+    <div class="checkout-container">
+      <h2>Resumo da sua compra</h2>
+      <div class="checkout-resumo" id="checkoutResumo"></div>
+      <div class="checkout-total" id="checkoutTotal">
+        <span>Total</span>
+        <span id="checkoutTotalValor">R$ 0,00</span>
+      </div>
+
+      <div class="pix-area">
+        <p class="pix-label">Pague com PIX</p>
+        <div id="pix-qrcode"></div>
+        <div class="pix-copia-cola-wrap">
+          <input type="text" id="pix-copia-cola" readonly>
+          <button id="btn-copiar" onclick="copiarChavePix()">Copiar</button>
+        </div>
+        <p class="pix-footer">
+          Pague com qualquer banco. O valor cai <strong>direto na conta dos noivos</strong> em segundos.
+        </p>
+        <a class="btn-voltar-lista" href="#presentes" onclick="fecharCheckout()">Voltar para lista de presentes</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- RSVP -->
+  <section id="rsvp" class="section">
+    <div class="container">
+      <h2 class="section-title">Confirme sua Presença</h2>
+      <div class="rsvp-form" id="rsvpForm">
+        <label for="rsvpNome">Seu nome</label>
+        <input type="text" id="rsvpNome" placeholder="Digite seu nome" required>
+
+        <label for="rsvpEmail">Seu e-mail</label>
+        <input type="email" id="rsvpEmail" placeholder="seu@email.com">
+
+        <label for="rsvpConfirmacao">Vai comparecer?</label>
+        <select id="rsvpConfirmacao">
+          <option value="sim">Sim, estarei presente!</option>
+          <option value="nao">Infelizmente não poderei ir</option>
+        </select>
+
+        <label for="rsvpMensagem">Deixe uma mensagem (opcional)</label>
+        <textarea id="rsvpMensagem" placeholder="Escreva uma mensagem para os noivos..."></textarea>
+
+        <button class="btn-submit" onclick="enviarRSVP()">Confirmar Presença</button>
+      </div>
+      <div class="rsvp-success" id="rsvpSuccess">
+        <h3>&#9829; Tudo certo!</h3>
+        <p>Sua confirmação foi enviada com sucesso.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p class="names">Sarah &amp; Levi</p>
+    <p>28 de Agosto de 2026 &mdash; Villa Castanieri</p>
+  </footer>
+
+  <script src="js/presentes.js"></script>
+  <script src="js/pix.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
