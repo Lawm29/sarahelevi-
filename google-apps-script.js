@@ -83,10 +83,7 @@ function handleRSVP(data) {
     new Date(),
     nomeCompleto,
     data.email || '',
-    data.telefone || '',
     data.confirmacao || '',
-    data.acompanhantes || '',
-    data.alergias || '',
     data.mensagem || ''
   ]);
 
@@ -169,7 +166,7 @@ function handleAdmin(data) {
   if (data.acao === 'salvar') {
     const lastRow = sheet.getLastRow();
     if (lastRow > 1) {
-      sheet.getRange(2, 1, lastRow - 1, sheet.getLastColumn()).clearContent();
+      sheet.deleteRows(2, lastRow - 1);
     }
 
     const presentes = data.presentes || [];

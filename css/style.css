@@ -915,7 +915,7 @@ nav {
 .footer-foto {
   position: relative;
   text-align: center;
-  padding: 120px 20px 80px;
+  padding: 10px 20px 250px;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -928,7 +928,7 @@ nav {
 }
 
 .footer-overlay p {
-  color: #c9a96e;
+  color: #000000;
   letter-spacing: 1px;
   font-size: 13px;
 }
@@ -936,6 +936,7 @@ nav {
 .footer-overlay .names {
   font-size: 20px;
   margin-bottom: 6px;
+  color: #000000;
 }
 
 /* Mobile */

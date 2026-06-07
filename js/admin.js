@@ -36,7 +36,7 @@ async function carregarAdmin() {
         id: parseInt(item.ID) || (idx + 1),
         categoria: item.Categoria || '',
         nome: item.Nome || '',
-        valorVista: parseFloat(item.ValorVista) || 0,
+        valorVista: (item.ValorVista !== '' && item.ValorVista !== undefined && item.ValorVista !== null) ? parseFloat(item.ValorVista) : 0,
         imagem: item.Imagem || ''
       }));
     } else {
@@ -58,7 +58,7 @@ function carregarDeFallback() {
       id: p.id,
       categoria: p.categoria || '',
       nome: p.nome || '',
-      valorVista: p.valorVista || 0,
+      valorVista: (p.valorVista !== undefined && p.valorVista !== null) ? p.valorVista : 0,
       imagem: p.imagem || ''
     }));
   } else {
@@ -118,7 +118,7 @@ function renderizarLista() {
 
   container.innerHTML = adminPresentes.map((item, idx) => {
     const imgPreview = item.imagem
-      ? `<img src="${item.imagem}" class="admin-thumb" onerror="this.style.display='none'">`
+      ? `<img src="${item.imagem}" class="admin-thumb" onerror="this.outerHTML='<div class=\\'admin-thumb admin-thumb-empty\\'>&#9829;</div>'">`
       : '<div class="admin-thumb admin-thumb-empty">&#9829;</div>';
     return `
       <div class="admin-item" data-id="${item.id}">
@@ -232,9 +232,8 @@ async function salvarTudo() {
   setStatus('Salvando na planilha...');
 
   try {
-    await fetch(API_URL, {
+    const res = await fetch(API_URL, {
       method: 'POST',
-      mode: 'no-cors',
       body: JSON.stringify({
         tipo: 'admin',
         senha: SENHA,
@@ -248,7 +247,12 @@ async function salvarTudo() {
         }))
       })
     });
-    setStatus('Salvo com sucesso!');
+    const result = await res.json();
+    if (result.ok) {
+      setStatus('Salvo com sucesso! (' + result.count + ' itens)');
+    } else {
+      setStatus('Erro: ' + (result.erro || 'Resposta inválida'));
+    }
     setTimeout(() => setStatus(''), 3000);
   } catch (e) {
     setStatus('Erro ao salvar. Tente novamente.');

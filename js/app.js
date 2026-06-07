@@ -19,8 +19,7 @@ async function carregarPresentes() {
         id: parseInt(item.ID) || (idx + 1),
         categoria: item.Categoria || '',
         nome: item.Nome || '',
-        valorVista: parseFloat(item.ValorVista) || 0,
-        valorParcelado: item.ValorParcelado ? parseFloat(item.ValorParcelado) : null,
+        valorVista: (item.ValorVista !== '' && item.ValorVista !== undefined && item.ValorVista !== null) ? parseFloat(item.ValorVista) : 0,
         imagem: item.Imagem || ''
       }));
     } else {
@@ -126,9 +125,6 @@ function renderizarPresentes(categoria) {
   const grid = document.getElementById('giftsGrid');
   const filtro = presentesData.filter(p => categoria === 'todas' || p.categoria === categoria);
   grid.innerHTML = filtro.map(p => {
-    const parcelado = p.valorParcelado
-      ? `<div class="preco-parcela">3x de <span>R$ ${p.valorParcelado.toFixed(2)}</span></div>`
-      : '';
     const noCarrinho = cart.some(c => c.id === p.id);
     const imgHtml = p.imagem
       ? `<img src="${p.imagem}" alt="${p.nome}" class="gift-img" loading="lazy">`
@@ -139,8 +135,7 @@ function renderizarPresentes(categoria) {
         <div class="categoria">${p.categoria}</div>
         <div class="nome">${p.nome}</div>
         <div class="precos">
-          ${parcelado}
-          <div class="preco-vista"><span class="label">ou R$ à vista</span> R$ ${p.valorVista.toFixed(2)}</div>
+          <div class="preco-vista">R$ ${p.valorVista.toFixed(2)}</div>
         </div>
         <button class="btn-gift" onclick="adicionarAoCarrinho(${p.id})" ${noCarrinho ? 'disabled' : ''}>
           ${noCarrinho ? 'No carrinho' : 'Presentear'}
@@ -310,7 +305,7 @@ async function enviarRSVP() {
     await fetch(API_URL, {
       method: 'POST',
       mode: 'no-cors',
-      body: JSON.stringify({ tipo: 'rsvp', nome, email, comparecera, mensagem })
+      body: JSON.stringify({ tipo: 'rsvp', nome, email, confirmacao: comparecera, mensagem })
     });
   } catch (e) {}
 
