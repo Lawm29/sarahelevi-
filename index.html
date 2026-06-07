@@ -6,7 +6,7 @@
   <title>Sarah & Levi - 28 de Agosto de 2026</title>
   <meta name="description" content="Site de casamento de Sarah e Levi - 28 de Agosto de 2026">
   <link rel="stylesheet" href="css/style.css">
-  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
 </head>
 <body>
@@ -156,6 +156,9 @@
       </div>
 
       <div class="pix-area">
+        <label for="checkoutNome">Seu nome</label>
+        <input type="text" id="checkoutNome" placeholder="Digite seu nome" style="width:100%;padding:10px;border:1px solid #ccc4b5;border-radius:4px;margin-bottom:16px;font-family:inherit;font-size:14px;box-sizing:border-box;">
+
         <p class="pix-label">Pague com PIX</p>
         <div id="pix-qrcode"></div>
         <div class="pix-copia-cola-wrap">
@@ -179,7 +182,7 @@
         <input type="text" id="rsvpNome" placeholder="Digite seu nome" required>
 
         <label for="rsvpEmail">Seu e-mail</label>
-        <input type="email" id="rsvpEmail" placeholder="seu@email.com">
+        <input type="email" id="rsvpEmail" placeholder="seu@email.com" required>
 
         <label for="rsvpConfirmacao">Vai comparecer?</label>
         <select id="rsvpConfirmacao">

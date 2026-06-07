@@ -1,10 +1,38 @@
 const PIX_CHAVE = '40007982860';
-const PIX_NOME = 'Sarah E Levi';
-const PIX_CIDADE = 'Jundiai';
+const PIX_NOME = 'LEVI ALBUQUERQUE GOUVEIA';
+const PIX_CIDADE = 'Sao Paulo';
+
+const API_URL = 'https://script.google.com/macros/s/AKfycbxG7h8D4_ff0TmzV_uBPfK7LxbzSM9RomOghN4MNwviGYbnj4QCCT-AnsdIKzlUk3de/exec';
 
 let cart = [];
 let sliderIndex = 0;
 let lastScrollY = 0;
+let presentesData = [];
+
+/* ─── Carregar Presentes da API ─── */
+async function carregarPresentes() {
+  try {
+    const res = await fetch(API_URL + '?action=getGifts');
+    const data = await res.json();
+    if (data.length > 0) {
+      presentesData = data.map((item, idx) => ({
+        id: parseInt(item.ID) || (idx + 1),
+        categoria: item.Categoria || '',
+        nome: item.Nome || '',
+        valorVista: parseFloat(item.ValorVista) || 0,
+        valorParcelado: item.ValorParcelado ? parseFloat(item.ValorParcelado) : null,
+        imagem: item.Imagem || ''
+      }));
+    } else {
+      presentesData = [...presentes];
+    }
+  } catch (e) {
+    presentesData = [...presentes];
+  }
+  carregarCategorias();
+  renderizarPresentes('todas');
+  atualizarCarrinho();
+}
 
 /* ─── Countdown ─── */
 function atualizarCountdown() {
@@ -83,8 +111,9 @@ document.getElementById('menuToggle').addEventListener('click', () => {
 
 /* ─── Lista de Presentes ─── */
 function carregarCategorias() {
-  const cats = [...new Set(presentes.map(p => p.categoria))];
   const sel = document.getElementById('filtroCategoria');
+  sel.innerHTML = '<option value="todas">Todas as categorias</option>';
+  const cats = [...new Set(presentesData.map(p => p.categoria))];
   cats.forEach(c => {
     const opt = document.createElement('option');
     opt.value = c;
@@ -95,7 +124,7 @@ function carregarCategorias() {
 
 function renderizarPresentes(categoria) {
   const grid = document.getElementById('giftsGrid');
-  const filtro = presentes.filter(p => categoria === 'todas' || p.categoria === categoria);
+  const filtro = presentesData.filter(p => categoria === 'todas' || p.categoria === categoria);
   grid.innerHTML = filtro.map(p => {
     const parcelado = p.valorParcelado
       ? `<div class="preco-parcela">3x de <span>R$ ${p.valorParcelado.toFixed(2)}</span></div>`
@@ -131,7 +160,7 @@ function adicionarAoCarrinho(id) {
     alert('Você pode escolher até 3 presentes por compra.');
     return;
   }
-  const item = presentes.find(p => p.id === id);
+  const item = presentesData.find(p => p.id === id);
   if (!item || cart.some(c => c.id === id)) return;
   cart.push({ ...item, mensagem: '' });
   atualizarCarrinho();
@@ -226,7 +255,7 @@ function irParaCheckout() {
   gerarPix(total);
 }
 
-function gerarPix(valor) {
+async function gerarPix(valor) {
   const container = document.getElementById('pix-qrcode');
   container.innerHTML = '';
 
@@ -235,6 +264,27 @@ function gerarPix(valor) {
   document.getElementById('pix-copia-cola').value = payload;
 
   gerarQRCode('pix-qrcode', payload);
+
+  /* Enviar registro da compra para a planilha */
+  try {
+    const nomeComprador = (document.getElementById('checkoutNome')?.value || '').trim();
+    const mensagens = cart
+      .filter(item => item.mensagem && item.mensagem.trim())
+      .map(item => item.mensagem.trim())
+      .join(' | ');
+
+    if (nomeComprador || mensagens) {
+      await fetch(API_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        body: JSON.stringify({
+          tipo: 'presente',
+          nome: nomeComprador || 'Anônimo',
+          mensagem: mensagens || ''
+        })
+      });
+    }
+  } catch (e) {}
 }
 
 function fecharCheckout() {
@@ -246,12 +296,23 @@ function fecharCheckout() {
 }
 
 /* ─── RSVP ─── */
-function enviarRSVP() {
+async function enviarRSVP() {
   const nome = document.getElementById('rsvpNome').value.trim();
-  if (!nome) {
-    alert('Por favor, informe seu nome.');
-    return;
-  }
+  const email = document.getElementById('rsvpEmail').value.trim();
+  const comparecera = document.getElementById('rsvpConfirmacao').value;
+  const mensagem = document.getElementById('rsvpMensagem').value.trim();
+
+  if (!nome) { alert('Por favor, informe seu nome.'); return; }
+  if (!email) { alert('Por favor, informe seu e-mail.'); return; }
+
+  try {
+    await fetch(API_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: JSON.stringify({ tipo: 'rsvp', nome, email, comparecera, mensagem })
+    });
+  } catch (e) {}
+
   document.getElementById('rsvpForm').style.display = 'none';
   document.getElementById('rsvpSuccess').style.display = 'block';
 }
@@ -295,7 +356,5 @@ function sliderNext() {
 }
 
 /* ─── Init ─── */
-carregarCategorias();
-renderizarPresentes('todas');
-atualizarCarrinho();
+carregarPresentes();
 sliderInit();

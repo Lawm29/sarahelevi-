@@ -69,17 +69,12 @@ function copiarChavePix() {
 function gerarQRCode(elementId, payload) {
   const container = document.getElementById(elementId);
   container.innerHTML = '';
-
-  QRCode.toCanvas(document.createElement('canvas'), payload, {
-    errorCorrectionLevel: 'M',
+  new QRCode(container, {
+    text: payload,
     width: 300,
-    margin: 2,
-    color: {
-      dark: '#000000',
-      light: '#ffffff'
-    }
-  }, function(err, canvas) {
-    if (err) return;
-    container.appendChild(canvas);
+    height: 300,
+    colorDark: '#000000',
+    colorLight: '#ffffff',
+    correctLevel: QRCode.CorrectLevel.M
   });
 }

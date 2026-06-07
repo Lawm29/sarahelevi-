@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Lista de Presentes</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="admin-body">
+
+  <!-- Login -->
+  <div class="admin-login" id="adminLogin">
+    <div class="admin-login-box">
+      <h1>&#9829; Admin</h1>
+      <p>Área restrita aos noivos</p>
+      <input type="password" id="adminSenha" placeholder="Digite a senha" autofocus>
+      <button onclick="fazerLogin()">Entrar</button>
+      <p class="admin-erro" id="adminErro"></p>
+    </div>
+  </div>
+
+  <!-- Painel -->
+  <div class="admin-painel" id="adminPainel" style="display:none;">
+    <header class="admin-header">
+      <h1>&#9829; Gerenciar Presentes</h1>
+      <div class="admin-header-actions">
+        <button class="admin-btn-salvar" onclick="salvarTudo()">Salvar na Planilha</button>
+        <a href="index.html" class="admin-btn-voltar">Voltar ao Site</a>
+      </div>
+    </header>
+
+    <div class="admin-status" id="adminStatus"></div>
+
+    <!-- Form Adicionar/Editar -->
+    <div class="admin-form-section">
+      <h2 id="formTitulo">Adicionar Novo Presente</h2>
+      <form id="adminForm" onsubmit="return salvarItem(event)">
+        <input type="hidden" id="editId" value="">
+        <div class="admin-form-grid">
+          <div>
+            <label>Nome</label>
+            <input type="text" id="formNome" required>
+          </div>
+          <div>
+            <label>Categoria</label>
+            <input type="text" id="formCategoria" required>
+          </div>
+          <div>
+            <label>Valor Vista (R$)</label>
+            <input type="number" id="formValorVista" step="0.01" min="0" required>
+          </div>
+          <div>
+            <label>Parcelas (3x)</label>
+            <input type="number" id="formParcelas" step="0.01" min="0">
+          </div>
+          <div class="admin-form-full">
+            <label>URL da Foto</label>
+            <input type="url" id="formImagem" placeholder="https://...">
+          </div>
+        </div>
+        <div class="admin-form-actions">
+          <button type="submit" class="admin-btn-adicionar">Salvar Item</button>
+          <button type="button" class="admin-btn-cancelar" onclick="cancelarEdicao()">Cancelar</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Lista -->
+    <div class="admin-lista-section">
+      <h2>Lista de Presentes (<span id="totalItens">0</span> itens)</h2>
+      <div id="adminLista" class="admin-lista"></div>
+    </div>
+  </div>
+
+  <script src="js/admin.js"></script>
+</body>
+</html>
