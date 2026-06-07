@@ -2,6 +2,23 @@ const SPREADSHEET_ID = '1Q7v3DSDyIY3eh14HkX44wsLIdeLQRXQMbIuKc0rWbyE';
 const ADMIN_SENHA = 'sarahlevi2026';
 const EMAIL_REMETENTE = 'sarahlevi.casamento@gmail.com';
 
+function getHeaderMap(sheet) {
+  const lastCol = sheet.getLastColumn();
+  if (lastCol === 0) return {};
+  const headers = sheet.getRange(1, 1, 1, lastCol).getValues()[0];
+  const map = {};
+  headers.forEach((h, i) => { if (h) map[h] = i + 1; });
+  return map;
+}
+
+function writeRow(sheet, row, headerMap, valueMap) {
+  Object.entries(valueMap).forEach(([header, value]) => {
+    if (headerMap[header]) {
+      sheet.getRange(row, headerMap[header]).setValue(value);
+    }
+  });
+}
+
 function doPost(e) {
   try {
     const data = JSON.parse(e.postData.contents);
@@ -92,18 +109,20 @@ function handleRSVP(data) {
   let sheet = ss.getSheetByName('RSVP');
   if (!sheet) {
     sheet = ss.insertSheet('RSVP');
-    sheet.appendRow(['Data', 'Nome', 'Email', 'Confirmacao', 'Mensagem']);
+    sheet.getRange('A1:E1').setValues([['Data', 'Nome', 'Email', 'Confirmacao', 'Mensagem']]);
   }
 
   const nomeCompleto = (data.nome || '').trim();
+  const headerMap = getHeaderMap(sheet);
+  const nextRow = sheet.getLastRow() + 1;
 
-  sheet.appendRow([
-    new Date(),
-    nomeCompleto,
-    data.email || '',
-    data.confirmacao || '',
-    data.mensagem || ''
-  ]);
+  writeRow(sheet, nextRow, headerMap, {
+    'Data': new Date(),
+    'Nome': nomeCompleto,
+    'Email': data.email || '',
+    'Confirmacao': data.confirmacao || '',
+    'Mensagem': data.mensagem || ''
+  });
 
   try {
     if (data.confirmacao === 'Aceito com alegria') {
@@ -143,18 +162,20 @@ function handlePurchase(data) {
   let sheet = ss.getSheetByName('Compras');
   if (!sheet) {
     sheet = ss.insertSheet('Compras');
-    sheet.appendRow(['Data', 'Comprador', 'PresenteID', 'Presente', 'Mensagem']);
+    sheet.getRange('A1:E1').setValues([['Data', 'Comprador', 'PresenteID', 'Presente', 'Mensagem']]);
   }
 
+  const headerMap = getHeaderMap(sheet);
   const items = data.itens || [];
   items.forEach(item => {
-    sheet.appendRow([
-      new Date(),
-      data.comprador || '',
-      item.id || '',
-      item.nome || '',
-      item.mensagem || ''
-    ]);
+    const nextRow = sheet.getLastRow() + 1;
+    writeRow(sheet, nextRow, headerMap, {
+      'Data': new Date(),
+      'Comprador': data.comprador || '',
+      'PresenteID': item.id || '',
+      'Presente': item.nome || '',
+      'Mensagem': item.mensagem || ''
+    });
   });
 
   return ContentService.createTextOutput(JSON.stringify({ ok: true }))
@@ -172,7 +193,56 @@ function handleAdmin(data) {
   let sheet = ss.getSheetByName('Presentes');
   if (!sheet) {
     sheet = ss.insertSheet('Presentes');
-    sheet.appendRow(['ID', 'Categoria', 'Nome', 'ValorVista', 'Imagem']);
+    sheet.getRange('A1:E1').setValues([['ID', 'Categoria', 'Nome', 'ValorVista', 'Imagem']]);
+  }
+
+  const headerMap = getHeaderMap(sheet);
+
+  if (data.acao === 'adicionar') {
+    const nextRow = sheet.getLastRow() + 1;
+    writeRow(sheet, nextRow, headerMap, {
+      'ID': data.item.id || '',
+      'Categoria': data.item.categoria || '',
+      'Nome': data.item.nome || '',
+      'ValorVista': data.item.valorVista || 0,
+      'Imagem': data.item.imagem || ''
+    });
+    return ContentService.createTextOutput(JSON.stringify({ ok: true }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+
+  if (data.acao === 'editar') {
+    const idAlvo = String(data.item.id);
+    const rows = sheet.getDataRange().getValues();
+    for (let i = 1; i < rows.length; i++) {
+      if (String(rows[i][0]) === idAlvo) {
+        writeRow(sheet, i + 1, headerMap, {
+          'ID': data.item.id || '',
+          'Categoria': data.item.categoria || '',
+          'Nome': data.item.nome || '',
+          'ValorVista': data.item.valorVista || 0,
+          'Imagem': data.item.imagem || ''
+        });
+        return ContentService.createTextOutput(JSON.stringify({ ok: true }))
+          .setMimeType(ContentService.MimeType.JSON);
+      }
+    }
+    return ContentService.createTextOutput(JSON.stringify({ ok: false, erro: 'ID nao encontrado' }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+
+  if (data.acao === 'excluir') {
+    const idAlvo = String(data.item.id);
+    const rows = sheet.getDataRange().getValues();
+    for (let i = 1; i < rows.length; i++) {
+      if (String(rows[i][0]) === idAlvo) {
+        sheet.deleteRow(i + 1);
+        return ContentService.createTextOutput(JSON.stringify({ ok: true }))
+          .setMimeType(ContentService.MimeType.JSON);
+      }
+    }
+    return ContentService.createTextOutput(JSON.stringify({ ok: false, erro: 'ID nao encontrado' }))
+      .setMimeType(ContentService.MimeType.JSON);
   }
 
   if (data.acao === 'salvar') {
@@ -181,15 +251,17 @@ function handleAdmin(data) {
       sheet.deleteRows(2, lastRow - 1);
     }
 
+    const headerMap = getHeaderMap(sheet);
     const presentes = data.presentes || [];
     presentes.forEach(p => {
-      sheet.appendRow([
-        p.id || '',
-        p.categoria || '',
-        p.nome || '',
-        p.valorVista || 0,
-        p.imagem || ''
-      ]);
+      const nextRow = sheet.getLastRow() + 1;
+      writeRow(sheet, nextRow, headerMap, {
+        'ID': p.id || '',
+        'Categoria': p.categoria || '',
+        'Nome': p.nome || '',
+        'ValorVista': p.valorVista || 0,
+        'Imagem': p.imagem || ''
+      });
     });
 
     return ContentService.createTextOutput(JSON.stringify({ ok: true, count: presentes.length }))

@@ -140,7 +140,7 @@ function renderizarLista() {
 }
 
 /* ─── Adicionar/Editar ─── */
-function salvarItem(e) {
+async function salvarItem(e) {
   e.preventDefault();
   const editId = document.getElementById('editId').value;
   const categoria = getCategoriaSelecionada();
@@ -158,6 +158,23 @@ function salvarItem(e) {
     imagem: document.getElementById('formImagem').value.trim()
   };
 
+  const acao = editId ? 'editar' : 'adicionar';
+
+  try {
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      body: JSON.stringify({ tipo: 'admin', senha: SENHA, acao: acao, item: item })
+    });
+    const result = await res.json();
+    if (!result.ok) {
+      setStatus('Erro: ' + (result.erro || 'Falha ao salvar'));
+      return;
+    }
+  } catch (err) {
+    setStatus('Erro de conexão. Tente novamente.');
+    return;
+  }
+
   if (editId) {
     const idx = adminPresentes.findIndex(p => p.id === parseInt(editId));
     if (idx >= 0) adminPresentes[idx] = item;
@@ -168,7 +185,7 @@ function salvarItem(e) {
   cancelarEdicao();
   renderizarCategorias();
   renderizarLista();
-  setStatus(editId ? 'Item atualizado!' : 'Item adicionado!');
+  setStatus(editId ? 'Item atualizado na planilha!' : 'Item adicionado na planilha!');
   setTimeout(() => setStatus(''), 2000);
 }
 
@@ -208,12 +225,28 @@ function cancelarEdicao() {
   document.getElementById('formTitulo').textContent = 'Adicionar Novo Presente';
 }
 
-function excluirItem(idx) {
+async function excluirItem(idx) {
   if (!confirm(`Excluir "${adminPresentes[idx].nome}"?`)) return;
+
+  try {
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      body: JSON.stringify({ tipo: 'admin', senha: SENHA, acao: 'excluir', item: { id: adminPresentes[idx].id } })
+    });
+    const result = await res.json();
+    if (!result.ok) {
+      setStatus('Erro: ' + (result.erro || 'Falha ao excluir'));
+      return;
+    }
+  } catch (err) {
+    setStatus('Erro de conexão. Tente novamente.');
+    return;
+  }
+
   adminPresentes.splice(idx, 1);
   renderizarCategorias();
   renderizarLista();
-  setStatus('Item removido!');
+  setStatus('Item removido da planilha!');
   setTimeout(() => setStatus(''), 2000);
 }
 

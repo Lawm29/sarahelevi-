@@ -915,12 +915,11 @@ nav {
 .footer-foto {
   position: relative;
   text-align: center;
-  padding: 10px 20px 10px;
-  background-size: contain;
-  background-position: center bottom;
+  padding: 120px 20px 80px;
+  background-size: cover;
+  background-position: center;
   background-repeat: no-repeat;
-  background-color: #fff;
-  min-height: 350px;
+  background-color: #1a1a1a;
 }
 
 .footer-overlay {
@@ -929,7 +928,7 @@ nav {
 }
 
 .footer-overlay p {
-  color: #000000;
+  color: #c9a96e;
   letter-spacing: 1px;
   font-size: 13px;
 }
@@ -937,7 +936,7 @@ nav {
 .footer-overlay .names {
   font-size: 20px;
   margin-bottom: 6px;
-  color: #000000;
+  color: #c9a96e;
 }
 
 /* Mobile */
