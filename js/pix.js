@@ -25,6 +25,7 @@ function addId(id, value) {
 
 function gerarPayloadPix(chave, valor, nome, cidade) {
   let payload = '000201';
+  payload += '010212';
 
   const gui = 'BR.GOV.BCB.PIX';
   const chaveField = addId('01', chave);
